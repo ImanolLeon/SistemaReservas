@@ -1,12 +1,12 @@
 package com.Reservas.SistemaReservas.Entity;
 
 import com.Reservas.SistemaReservas.Entity.Enum.EstadoReserva;
+import com.Reservas.SistemaReservas.Entity.security.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Entity
 @Table(name = "reserva")
