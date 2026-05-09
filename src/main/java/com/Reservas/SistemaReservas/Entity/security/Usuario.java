@@ -21,14 +21,14 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private Rol rol;
-
     @Column(name = "dni",length = 8,unique = true)
     private String dni ;
 
     @Column(name = "nombre",nullable = false)
     private String nombre;
+
+    @Column(nullable = false,unique = true)
+    private  String username;
 
     @Column(name = "apellido",nullable = false)
     private String apellido;
@@ -41,7 +41,7 @@ public class Usuario {
 
     private String password;
 
-    @OneToMany(targetEntity = Reserva.class, mappedBy = "usuario",cascade = CascadeType.ALL )
+    @OneToMany(mappedBy = "usuario",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Reserva> reserva ;
 
     //variables spring security
@@ -53,8 +53,8 @@ public class Usuario {
     @ManyToMany
             @JoinTable(
                     name = "user_rol",
-                    joinColumns = @JoinColumn(name = "user"),
-                    inverseJoinColumns = @JoinColumn(name = "rol")
+                    joinColumns = @JoinColumn(name = "user_id"),
+                    inverseJoinColumns = @JoinColumn(name = "rol_id")
             )
     Set<RolEntity> roles = new HashSet<>();
 }

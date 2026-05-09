@@ -16,9 +16,7 @@ public class ReservaBalon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "idReserva")
+    @OneToOne(cascade = CascadeType.ALL,mappedBy = "balones")
     private Reserva reservaBalon;
 
     @ManyToOne

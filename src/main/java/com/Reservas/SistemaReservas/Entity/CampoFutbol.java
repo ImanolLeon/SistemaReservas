@@ -27,8 +27,9 @@ public class CampoFutbol {
     @Enumerated(EnumType.STRING)
     private TamanoCampo tamanoCampo;
 
-    @OneToMany(targetEntity = Reserva.class,cascade = CascadeType.ALL ,mappedBy = "idCampoFutbol")
+    @OneToMany(cascade = CascadeType.ALL ,mappedBy = "idCampoFutbol")
     private List<Reserva> reserva;
+
     @Enumerated(EnumType.STRING)
     private SuperficieCampo superficieCampo;
 

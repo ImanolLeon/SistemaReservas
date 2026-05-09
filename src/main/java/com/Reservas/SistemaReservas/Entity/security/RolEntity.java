@@ -25,4 +25,11 @@ public class RolEntity {
     @ManyToMany(mappedBy = "roles")
     Set<Usuario> usuarios = new HashSet<>();
 
+    @ManyToMany
+            @JoinTable(
+                    name = "rol_permisos",
+                    joinColumns = @JoinColumn(name = "rol"),
+                    inverseJoinColumns = @JoinColumn(name = "permisos")
+            )
+    Set<PermissionEntity> permisos = new HashSet<>();
 }
