@@ -25,8 +25,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain (HttpSecurity security){
         return security
                 .csrf(csrf -> csrf.disable())
-                .httpBasic(basic -> Customizer.withDefaults())
+                .httpBasic( Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(
+
+                        arg -> arg.anyRequest().permitAll())
                 .build();
     }
 

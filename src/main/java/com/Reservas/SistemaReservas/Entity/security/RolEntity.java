@@ -25,7 +25,7 @@ public class RolEntity {
     @ManyToMany(mappedBy = "roles")
     Set<Usuario> usuarios = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
             @JoinTable(
                     name = "rol_permisos",
                     joinColumns = @JoinColumn(name = "rol"),

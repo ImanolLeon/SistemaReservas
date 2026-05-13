@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.List;
 import java.util.Set;
 
 @SpringBootApplication
@@ -21,7 +22,7 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-
+/*
 	@Bean
 	public CommandLineRunner commandLineRunner(UsuarioRepository usuarioRepository){
 		return args -> {
@@ -90,17 +91,17 @@ public class Application {
 					.build();
 
 			Usuario usuario2= Usuario.builder()
-					.dni("61230112")
-					.email("juan@gmail.com")
-					.apellido("Prado")
-					.nombre("recepcion")
-					.username("recepcion")
-					.password(new BCryptPasswordEncoder().encode("recepcion"))
+					.dni("61230113")
+					.email("juan123@gmail.com")
+					.apellido("Usuario")
+					.nombre("usuario")
+					.username("usuario")
+					.password(new BCryptPasswordEncoder().encode("usuario"))
 					.isEnable(true)
 					.isAccountNonExpired(true)
 					.isAccountNonLocked(true)
 					.isCredentialsNonExpired(true)
-					.roles(Set.of(recepcion))
+					.roles(Set.of(user))
 					.build();
 
 			Usuario usuario3= Usuario.builder()
@@ -117,6 +118,9 @@ public class Application {
 					.roles(Set.of(recepcion))
 					.build();
 
+			usuarioRepository.saveAll(List.of(usuario1,usuario2,usuario3));
 		};
-	}
+}
+*/
+
 }

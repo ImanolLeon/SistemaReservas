@@ -1,5 +1,6 @@
 package com.Reservas.SistemaReservas.Entity;
 
+import com.Reservas.SistemaReservas.Entity.Enum.TamanoBalon;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,12 +17,14 @@ public class Balon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idBalon;
+
     @Column(name = "tamano",nullable = false)
-    private int tamano;
+    @Enumerated(EnumType.STRING)
+    private TamanoBalon balon;
     @Column(name = "Imagen")
     private String rutaImagen;
 
     @OneToMany(targetEntity = ReservaBalon.class,cascade = CascadeType.ALL,mappedBy = "idBalon")
-    private List<ReservaBalon> balones;
+    private List<ReservaBalon> reservasBalones;
 
 }

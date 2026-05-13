@@ -50,7 +50,7 @@ public class Usuario {
     private boolean isAccountNonLocked;
     private boolean isAccountNonExpired;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
             @JoinTable(
                     name = "user_rol",
                     joinColumns = @JoinColumn(name = "user_id"),

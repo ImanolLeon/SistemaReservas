@@ -17,7 +17,7 @@ public class ReservaBalon {
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL,mappedBy = "balones")
-    private Reserva reservaBalon;
+    private Reserva reserva;
 
     @ManyToOne
     @JoinColumn(name = "idBalon")

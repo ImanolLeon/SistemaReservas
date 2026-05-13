@@ -25,7 +25,7 @@ public class UserDetailsImpl implements UserDetailsService {
 
         List<SimpleGrantedAuthority> grantedAuthorities= new ArrayList<>();
         usuario.getRoles().stream()
-                .forEach(roles -> grantedAuthorities.add(new SimpleGrantedAuthority("ROL_".concat(roles.getRoles().name()))));
+                .forEach(roles -> grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_".concat(roles.getRoles().name()))));
 
         usuario.getRoles().stream().
                 flatMap(roles -> roles.getPermisos().stream())
