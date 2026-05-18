@@ -1,26 +1,48 @@
 package com.Reservas.SistemaReservas.Services.interfaces;
 
+import com.Reservas.SistemaReservas.dto.request.ReservaRequest;
+import com.Reservas.SistemaReservas.Entity.CampoFutbol;
 import com.Reservas.SistemaReservas.Entity.Enum.EstadoReserva;
 import com.Reservas.SistemaReservas.Entity.Reserva;
+import com.Reservas.SistemaReservas.Entity.security.Usuario;
+import com.Reservas.SistemaReservas.Repository.CampoFutbolRepository;
 import com.Reservas.SistemaReservas.Repository.ReservaRepository;
+import com.Reservas.SistemaReservas.Repository.UsuarioRepository;
 import com.Reservas.SistemaReservas.Services.implementation.ReservaServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class ReservaService implements ReservaServiceImpl {
 
-    @Autowired
+    private UsuarioRepository usuarioRepository;
     private ReservaRepository reservaRepository;
+    private CampoFutbolRepository campoFutbolRepository;
 
 
     @Override
     public boolean validarReserva(Reserva reserva) {
         return true;
     }
+
+    @Override
+    public ReservaRequest cambiarEstado(Long id) {
+
+        if(id<=0){
+            throw new RuntimeException("el id es menor o igual que cero");
+        }
+        Reserva reserva = reservaRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("No se encontró una reserva con ese id")
+        );
+
+        return null;
+    }
+
     @Override
     public List<Reserva> findAll() {
         return reservaRepository.findAll();
@@ -58,14 +80,30 @@ public class ReservaService implements ReservaServiceImpl {
         return reservaRepository.findByEstadoReserva(estado);
     }
 
+    //ValidarReserva
+
+
     @Override
-    public Reserva guardar(Reserva reserva) {
+    public ReservaRequest guardar(ReservaRequest reserva) {
+        //validacion
+        Usuario usuario =  usuarioRepository.findById(reserva.idUsuario()).orElseThrow(
+                () -> new RuntimeException("Usuario no encontrado"));
 
-        if ( reserva==null){
-            throw new RuntimeException("La reserva enviada es un valor nulo");
-        }
+        CampoFutbol campoFutbol = campoFutbolRepository.findById(reserva.campoFutbol()).
+                orElseThrow( () -> new RuntimeException("No se encontró campod e futbol"));
 
-        return reservaRepository.save(reserva);
+        Reserva reserva1= Reserva.builder()
+                .idCampoFutbol(campoFutbol)
+                .fecha(reserva.fecha())
+                .horaInicio(LocalTime.parse(reserva.horaInicio()))
+                .horaFinal(LocalTime.parse(reserva.horaFinal()))
+                .balones(null)
+                .camisetas(null)
+                .precio(reserva.precio())
+                .usuario(usuario)
+                .dia(reserva.dia())
+                .build();
+        return  reserva;
 
     }
 

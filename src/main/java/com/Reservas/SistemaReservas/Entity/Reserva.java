@@ -31,10 +31,10 @@ public class Reserva {
     @JoinColumn(name = "idCampoFutbol")
     private CampoFutbol idCampoFutbol;
 
-    @Column(name = "HoraInicio")
+    @Column(name = "Hora_inicio")
     private LocalTime horaInicio;
 
-    @Column(name="HoraFinal")
+    @Column(name="Hora_final")
     private LocalTime horaFinal;
 
     @Column(name = "fecha")
