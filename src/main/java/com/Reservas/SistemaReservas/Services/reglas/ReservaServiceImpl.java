@@ -2,6 +2,7 @@ package com.Reservas.SistemaReservas.Services.reglas;
 
 import com.Reservas.SistemaReservas.dto.request.ReservaRequest;
 import com.Reservas.SistemaReservas.Entity.Reserva;
+import com.Reservas.SistemaReservas.dto.response.ReservaBalonResponse;
 import com.Reservas.SistemaReservas.dto.response.ReservaReponse;
 
 import java.time.LocalTime;
@@ -17,6 +18,6 @@ public interface ReservaServiceImpl  {
     boolean cancelarReserva(Long id);
     List<ReservaReponse> findByCampoFutbol(Long id);
     List<ReservaReponse> findByHoraInicio(LocalTime horaInicio);
-
-
+    ReservaBalonResponse guardarReservaBalon(Long idReserva,Long idBalon);
+    void eliminarReservaBalon(Long idReserva);
 }

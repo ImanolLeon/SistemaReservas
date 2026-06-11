@@ -3,6 +3,7 @@ package com.Reservas.SistemaReservas.Controller;
 import com.Reservas.SistemaReservas.Entity.Reserva;
 import com.Reservas.SistemaReservas.Services.impl.ReservaService;
 import com.Reservas.SistemaReservas.dto.request.ReservaRequest;
+import com.Reservas.SistemaReservas.dto.response.ReservaBalonResponse;
 import com.Reservas.SistemaReservas.dto.response.ReservaReponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,17 @@ public class ReservaController {
             .body(reservaService.cancelarReserva(id));
    }
 
+   @PostMapping("/reservarBalon/{idReserva}/{idBalon}")
+   public ResponseEntity<ReservaBalonResponse> reservarBalon(@PathVariable Long idReserva, @PathVariable Long idBalon){
+     return ResponseEntity.status(HttpStatus.CREATED)
+             .body(reservaService.guardarReservaBalon(idReserva,idBalon));
+   }
+
+   @DeleteMapping("/borrarReservaBalon/{idReserva}")
+   public ResponseEntity<Void> borrarReservaBalon(@PathVariable Long idReserva){
+       reservaService.eliminarReservaBalon(idReserva);
+       return ResponseEntity.status(HttpStatus.OK).build();
+   }
    @GetMapping("/findAll")
    public ResponseEntity<List<ReservaReponse>> findAll(){
     return ResponseEntity.status(HttpStatus.OK)

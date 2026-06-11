@@ -1,5 +1,6 @@
 package com.Reservas.SistemaReservas.dto.response;
 
+import com.Reservas.SistemaReservas.dto.request.ReservaBalonRequest;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -14,9 +15,9 @@ public record ReservaReponse(
 
         LocalDate fecha,
 
-        String dia
+        String dia,
 
-
+        ReservaBalonRequest reservaBalones
 
 ) {
 }
