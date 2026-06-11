@@ -1,6 +1,6 @@
 package com.Reservas.SistemaReservas.config;
 
-import com.Reservas.SistemaReservas.Services.interfaces.UserDetailsImpl;
+import com.Reservas.SistemaReservas.Services.impl.UserDetailsImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +28,6 @@ public class SecurityConfig {
                 .httpBasic( Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
-
                         arg -> arg.anyRequest().permitAll())
                 .build();
     }
@@ -42,6 +41,7 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider (UserDetailsImpl userDetails){
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userDetails);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+
         return daoAuthenticationProvider;
     }
 

@@ -3,6 +3,7 @@ package com.Reservas.SistemaReservas.Entity;
 import com.Reservas.SistemaReservas.Entity.Enum.CondicionCampo;
 import com.Reservas.SistemaReservas.Entity.Enum.SuperficieCampo;
 import com.Reservas.SistemaReservas.Entity.Enum.TamanoCampo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,7 @@ public class CampoFutbol {
     @Enumerated(EnumType.STRING)
     private TamanoCampo tamanoCampo;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL ,mappedBy = "idCampoFutbol")
     private List<Reserva> reserva;
 

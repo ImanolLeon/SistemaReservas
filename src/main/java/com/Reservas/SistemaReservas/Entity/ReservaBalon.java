@@ -1,5 +1,6 @@
 package com.Reservas.SistemaReservas.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.userdetails.User;
@@ -16,10 +17,11 @@ public class ReservaBalon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @OneToOne(cascade = CascadeType.ALL,mappedBy = "balones")
-    private Reserva reserva;
+    private Reserva idreserva;
 
     @ManyToOne
-    @JoinColumn(name = "idBalon")
+    @JoinColumn(name = "id_Balon")
     private Balon idBalon;
 }

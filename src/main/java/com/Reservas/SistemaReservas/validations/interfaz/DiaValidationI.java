@@ -13,7 +13,6 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = DiaValidation.class)
 public @interface DiaValidationI {
 
-
     String message() default "{time.day}";
 
     Class<?>[] groups() default { };

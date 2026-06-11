@@ -2,6 +2,7 @@ package com.Reservas.SistemaReservas.Entity.security;
 
 import com.Reservas.SistemaReservas.Entity.Enum.Rol;
 import com.Reservas.SistemaReservas.Entity.Reserva;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,7 +42,7 @@ public class Usuario {
 
     private String password;
 
-    @OneToMany(mappedBy = "usuario",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "usuario",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Reserva> reserva ;
 
     //variables spring security
@@ -50,7 +51,7 @@ public class Usuario {
     private boolean isAccountNonLocked;
     private boolean isAccountNonExpired;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
             @JoinTable(
                     name = "user_rol",
                     joinColumns = @JoinColumn(name = "user_id"),

@@ -1,28 +1,73 @@
 package com.Reservas.SistemaReservas.Controller;
 
-import com.Reservas.SistemaReservas.Services.interfaces.ReservaService;
+import com.Reservas.SistemaReservas.Entity.Reserva;
+import com.Reservas.SistemaReservas.Services.impl.ReservaService;
 import com.Reservas.SistemaReservas.dto.request.ReservaRequest;
+import com.Reservas.SistemaReservas.dto.response.ReservaReponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/reserva")
 @AllArgsConstructor
 public class ReservaController {
- private ReservaService reservaService;
+   private ReservaService reservaService;
+
+   @PostMapping("/cambiarEstado/{id}")
+   public ResponseEntity<Boolean> cancelarReserva(@PathVariable Long id){
+    return  ResponseEntity.status(HttpStatus.OK)
+            .body(reservaService.cancelarReserva(id));
+   }
+
+   @GetMapping("/findAll")
+   public ResponseEntity<List<ReservaReponse>> findAll(){
+    return ResponseEntity.status(HttpStatus.OK)
+            .body(reservaService.findAll());
+   }
 
 
- @PostMapping("save")
-    public ResponseEntity<ReservaRequest> save(@RequestBody ReservaRequest request){
-     return  ResponseEntity.status(HttpStatus.OK).body(
-             reservaService.guardar(request)
-     );
- }
+   @GetMapping("/findByDia/{dia}")
+   public ResponseEntity<List<ReservaReponse>> findByDia(@PathVariable String dia){
+    return ResponseEntity.ok(reservaService.findByDia(dia));
+   }
+
+   @GetMapping("/findByEstadoReserva/{estado}")
+   public ResponseEntity<List<ReservaReponse>> findByEstadoReserva(@PathVariable String estado){
+    return ResponseEntity.status(HttpStatus.OK).
+            body(reservaService.findByEstadoReserva(estado));
+   }
+
+   @PostMapping("/save")
+   public ResponseEntity<ReservaRequest> save(@RequestBody ReservaRequest request){
+    return ResponseEntity.status(HttpStatus.CREATED).body(
+            reservaService.guardar(request));
+   }
+
+   @GetMapping("/findById/{id}")
+   public ResponseEntity<Reserva> findById(@PathVariable Long id){
+    return ResponseEntity.status(HttpStatus.OK).body(
+            reservaService.buscarPorId(id));
+   }
+
+   //Buscar por nombre
+   @GetMapping("/findByCampo/{id}")
+    public ResponseEntity<List<ReservaReponse>> findByCampo(@PathVariable Long id){
+       return ResponseEntity.status(HttpStatus.OK).body(
+               reservaService.findByCampoFutbol(id)
+       );
+   }
+
+   //Buscar por nombre
+
+
+
+
+
+
 
 
 

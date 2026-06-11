@@ -23,7 +23,6 @@ public record ReservaRequest (
 
         LocalDate fecha,
 
-
         @DiaValidationI
         String dia,
 

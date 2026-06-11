@@ -1,7 +1,7 @@
 package com.Reservas.SistemaReservas.Controller;
 
 import com.Reservas.SistemaReservas.Entity.Camiseta;
-import com.Reservas.SistemaReservas.Services.interfaces.CamisetaService;
+import com.Reservas.SistemaReservas.Services.impl.CamisetaService;
 import com.Reservas.SistemaReservas.dto.request.CamisetaDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

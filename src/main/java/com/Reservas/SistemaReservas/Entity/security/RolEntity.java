@@ -1,6 +1,7 @@
 package com.Reservas.SistemaReservas.Entity.security;
 
 import com.Reservas.SistemaReservas.Entity.Enum.Rol;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,11 +22,11 @@ public class RolEntity {
 
     @Enumerated(value = EnumType.STRING)
     private Rol roles;
-
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     Set<Usuario> usuarios = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(fetch =FetchType.EAGER,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
             @JoinTable(
                     name = "rol_permisos",
                     joinColumns = @JoinColumn(name = "rol"),

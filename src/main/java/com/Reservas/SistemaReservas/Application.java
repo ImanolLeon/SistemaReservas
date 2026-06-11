@@ -22,7 +22,7 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-/*
+	/*
 	@Bean
 	public CommandLineRunner commandLineRunner(UsuarioRepository usuarioRepository){
 		return args -> {
@@ -81,6 +81,7 @@ public class Application {
 					.email("imanol@gmail.com")
 					.apellido("Leon")
 					.nombre("Imanol")
+					.numero("984325252")
 					.username("admin")
 					.password(new BCryptPasswordEncoder().encode("admin"))
 					.isEnable(true)
@@ -95,6 +96,7 @@ public class Application {
 					.email("juan123@gmail.com")
 					.apellido("Usuario")
 					.nombre("usuario")
+					.numero("984325252")
 					.username("usuario")
 					.password(new BCryptPasswordEncoder().encode("usuario"))
 					.isEnable(true)
@@ -108,6 +110,7 @@ public class Application {
 					.dni("61230112")
 					.email("juan@gmail.com")
 					.apellido("Prado")
+					.numero("984325252")
 					.nombre("recepcion")
 					.username("recepcion")
 					.password(new BCryptPasswordEncoder().encode("recepcion"))
@@ -121,6 +124,8 @@ public class Application {
 			usuarioRepository.saveAll(List.of(usuario1,usuario2,usuario3));
 		};
 }
-*/
+
+	 */
+
 
 }

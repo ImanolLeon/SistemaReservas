@@ -2,6 +2,7 @@ package com.Reservas.SistemaReservas.Entity.security;
 
 import com.Reservas.SistemaReservas.Entity.Enum.Permissions;
 import com.Reservas.SistemaReservas.Entity.Enum.Rol;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class PermissionEntity {
     @Enumerated(value = EnumType.STRING)
     private Permissions permisos;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "permisos")
     Set<RolEntity> roles = new HashSet<>();
 
