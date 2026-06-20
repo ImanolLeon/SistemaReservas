@@ -20,5 +20,5 @@ public class ReservaCamiseta {
 
     @ManyToOne()
     @JoinColumn(name = "camisetaId")
-    private Camiseta camiseta_id;
+    private Camiseta camisetaId;
 }

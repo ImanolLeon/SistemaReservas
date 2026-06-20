@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
+
 @Component
 @AllArgsConstructor
 public class ReservaMapper {
@@ -18,30 +19,29 @@ public class ReservaMapper {
     private UsuarioRepository usuarioRepository;
 
 
-
-    public  Reserva convertirReservaRequestToReserva(ReservaRequest reservaRequest) {
-       Usuario usuario = usuarioRepository.findById(reservaRequest.idUsuario()).orElseThrow(
-               () -> new RuntimeException("Usuario no encontrado")
-       );
-
-       Reserva reserva = Reserva.builder()
-               .estadoReserva(EstadoReserva.RESERVADA)
-               .dia(reservaRequest.dia())
-               .horaFinal(LocalTime.parse(reservaRequest.horaFinal()))
-               .horaInicio(LocalTime.parse(reservaRequest.horaInicio()))
-               .precio(reservaRequest.precio())
-               .fecha(reservaRequest.fecha())
-               .build();
-        return reserva;
-    }
-
-
-    public ReservaReponse convertirReservaRequestToReservaResponse(ReservaRequest reservaRequest){
+    public Reserva convertirReservaRequestToReserva(ReservaRequest reservaRequest) {
         Usuario usuario = usuarioRepository.findById(reservaRequest.idUsuario()).orElseThrow(
                 () -> new RuntimeException("Usuario no encontrado")
         );
 
-        return  ReservaReponse.builder()
+        Reserva reserva = Reserva.builder()
+                .estadoReserva(EstadoReserva.RESERVADA)
+                .dia(reservaRequest.dia())
+                .horaFinal(LocalTime.parse(reservaRequest.horaFinal()))
+                .horaInicio(LocalTime.parse(reservaRequest.horaInicio()))
+                .precio(reservaRequest.precio())
+                .fecha(reservaRequest.fecha())
+                .build();
+        return reserva;
+    }
+
+
+    public ReservaReponse convertirReservaRequestToReservaResponse(ReservaRequest reservaRequest) {
+        Usuario usuario = usuarioRepository.findById(reservaRequest.idUsuario()).orElseThrow(
+                () -> new RuntimeException("Usuario no encontrado")
+        );
+
+        return ReservaReponse.builder()
                 .nombreUsuario(usuario.getNombre())
                 .dia(reservaRequest.dia())
                 .fecha(reservaRequest.fecha())

@@ -23,6 +23,6 @@ public class Camiseta {
     private String rutaImagen;
 
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "camiseta_id")
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "camisetaId")
     private List<ReservaCamiseta>  reservaCamiseta;
 }

@@ -3,6 +3,7 @@ package com.Reservas.SistemaReservas.Services.impl;
 import com.Reservas.SistemaReservas.Entity.Balon;
 import com.Reservas.SistemaReservas.Entity.ReservaBalon;
 import com.Reservas.SistemaReservas.Repository.*;
+import com.Reservas.SistemaReservas.Repository.Especificaciones.ReservaEspecificaciones;
 import com.Reservas.SistemaReservas.dto.request.ReservaBalonRequest;
 import com.Reservas.SistemaReservas.dto.request.ReservaRequest;
 import com.Reservas.SistemaReservas.Entity.CampoFutbol;
@@ -10,10 +11,13 @@ import com.Reservas.SistemaReservas.Entity.Enum.EstadoReserva;
 import com.Reservas.SistemaReservas.Entity.Reserva;
 import com.Reservas.SistemaReservas.Entity.security.Usuario;
 import com.Reservas.SistemaReservas.Services.reglas.ReservaServiceImpl;
+import com.Reservas.SistemaReservas.dto.request.ReservaRequestEspecification;
 import com.Reservas.SistemaReservas.dto.response.ReservaBalonResponse;
+import com.Reservas.SistemaReservas.dto.response.ReservaCamisetaResponse;
 import com.Reservas.SistemaReservas.dto.response.ReservaReponse;
 import com.Reservas.SistemaReservas.excepcion.ApiExcepcion;
 import com.Reservas.SistemaReservas.excepcion.MensajesExcepction;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -60,17 +64,13 @@ public class ReservaService implements ReservaServiceImpl {
                 entidad.getHoraInicio()
                         .toString(), entidad.getHoraFinal()
                 .toString(), entidad.getFecha(),
-                entidad.getDia(),null
+                entidad.getDia(), null
         )).toList();
 
     }
 
     @Override
-    public List<ReservaReponse> findByHoraInicio(LocalTime horaInicio) {
-
-        if (horaInicio.toString().isBlank()) {
-            throw ApiExcepcion.valueInvalid(MensajesExcepction.DATO_INVALIDO.formatted(horaInicio));
-        }
+    public List<ReservaReponse> findByHoraInicio(@NotBlank LocalTime horaInicio) {
 
         List<Reserva> reservasPorHora = reservaRepository.findByHoraInicio(horaInicio);
 
@@ -80,7 +80,7 @@ public class ReservaService implements ReservaServiceImpl {
                 entidad.getFecha(),
                 entidad.getDia(),
                 new ReservaBalonRequest(entidad.getBalones().getIdBalon().getRutaImagen())
-                )).toList();
+        )).toList();
 
     }
 
@@ -89,7 +89,13 @@ public class ReservaService implements ReservaServiceImpl {
         Reserva reserva = buscarPorId(idReserva);
         Balon balon = balonService.findById(idBalon);
 
-        long cruce = reservaRepository.contarCrucesReservaBalon(idBalon, reserva.getHoraFinal(), reserva.getHoraInicio(), reserva.getDia());
+        long cruce = reservaRepository.contarCrucesReservaBalon(
+                idBalon,
+                reserva.getHoraFinal(),
+                reserva.getHoraInicio(),
+                reserva.getDia(),
+                reserva.getFecha()
+        );
         if (cruce > 0) {
             throw ApiExcepcion.valueInvalid(MensajesExcepction.CRUCE_HORARIO.formatted("id reserva:" + idReserva));
         }
@@ -121,6 +127,43 @@ public class ReservaService implements ReservaServiceImpl {
         }
     }
 
+    @Override
+    public ReservaCamisetaResponse reservarCamiseta(Long idReserva, Long camisetaReserva) {
+
+        Reserva reserva = buscarPorId(idReserva);
+
+        Long cruce = reservaRepository.findCruceReservaCamiseta(
+                camisetaReserva, reserva.getHoraFinal(),
+                reserva.getHoraInicio(),
+                reserva.getDia(),
+                reserva.getFecha());
+
+        if (cruce > 0) {
+            throw ApiExcepcion.valueInvalid(MensajesExcepction.CRUCE_HORARIO.formatted("id reserva:" + idReserva));
+        }
+        return null;
+    }
+
+    @Override
+    public List<ReservaReponse> listarPorParametros(ReservaRequestEspecification reservaRequestEspecification) {
+
+        ReservaEspecificaciones reservaEspecificaciones =
+                new ReservaEspecificaciones(reservaRequestEspecification);
+        return reservaRepository.findAll(reservaEspecificaciones).stream()
+                .map(reserva -> new ReservaReponse(
+                        reserva.getUsuario().getNombre(),
+                        reserva.getHoraInicio().toString(),
+                        reserva.getHoraFinal().toString(),
+                        reserva.getFecha(),
+                        reserva.getDia(),
+                        (reserva.getBalones() != null) ?
+                                new ReservaBalonRequest(
+                                        reserva.getBalones().getIdBalon().getRutaImagen()
+                                ) : null
+                )).toList();
+
+    }
+
 
     @Override
     public List<ReservaReponse> findAll() {
@@ -135,9 +178,9 @@ public class ReservaService implements ReservaServiceImpl {
                         entidad.getFecha(),
                         entidad.getDia(),
                         (entidad.getBalones() != null) ?
-                        new ReservaBalonRequest(entidad.getBalones().getIdBalon().getRutaImagen()) :
-                        null)
-                ).toList();
+                                new ReservaBalonRequest(entidad.getBalones().getIdBalon().getRutaImagen()) :
+                                null)
+        ).toList();
     }
 
     @Override

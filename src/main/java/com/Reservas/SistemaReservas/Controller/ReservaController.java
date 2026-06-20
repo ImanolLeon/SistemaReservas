@@ -2,7 +2,9 @@ package com.Reservas.SistemaReservas.Controller;
 
 import com.Reservas.SistemaReservas.Entity.Reserva;
 import com.Reservas.SistemaReservas.Services.impl.ReservaService;
+import com.Reservas.SistemaReservas.dto.request.ReservaBalonRequest;
 import com.Reservas.SistemaReservas.dto.request.ReservaRequest;
+import com.Reservas.SistemaReservas.dto.request.ReservaRequestEspecification;
 import com.Reservas.SistemaReservas.dto.response.ReservaBalonResponse;
 import com.Reservas.SistemaReservas.dto.response.ReservaReponse;
 import lombok.AllArgsConstructor;
@@ -10,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -71,6 +75,17 @@ public class ReservaController {
        return ResponseEntity.status(HttpStatus.OK).body(
                reservaService.findByCampoFutbol(id)
        );
+   }
+
+   @GetMapping("/filtrar")
+    ResponseEntity<List<ReservaReponse>>
+   filtrarReservas(@RequestParam(required = false) LocalDate fecha,
+                   @RequestParam(required = false) String nombreCampoFutbol,
+                   @RequestParam(required = false) String dia,
+                   @RequestParam(required = false) LocalTime horaInicio){
+       ReservaRequestEspecification reservaRequestEspecification =
+               new ReservaRequestEspecification(fecha,dia,nombreCampoFutbol,horaInicio);
+    return  ResponseEntity.status(HttpStatus.OK).body(reservaService.listarPorParametros(reservaRequestEspecification));
    }
 
    //Buscar por nombre
