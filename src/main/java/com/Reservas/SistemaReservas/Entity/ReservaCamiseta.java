@@ -15,11 +15,10 @@ public class ReservaCamiseta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reservaId")
+    @OneToOne(mappedBy = "camisetas")
     private Reserva reservaCamiseta;
 
-    @ManyToOne(targetEntity = Camiseta.class)
+    @ManyToOne()
     @JoinColumn(name = "camisetaId")
-    private Camiseta camiseta_id;
+    private Camiseta camisetaId;
 }

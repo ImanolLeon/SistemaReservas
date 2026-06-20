@@ -3,6 +3,7 @@ package com.Reservas.SistemaReservas.Entity;
 import com.Reservas.SistemaReservas.Entity.Enum.CondicionCampo;
 import com.Reservas.SistemaReservas.Entity.Enum.SuperficieCampo;
 import com.Reservas.SistemaReservas.Entity.Enum.TamanoCampo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +20,8 @@ public class CampoFutbol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     private String  nombre;
     @Enumerated(EnumType.STRING)
     private CondicionCampo condicionCampo;
@@ -27,8 +29,10 @@ public class CampoFutbol {
     @Enumerated(EnumType.STRING)
     private TamanoCampo tamanoCampo;
 
-    @OneToMany(targetEntity = Reserva.class,cascade = CascadeType.ALL ,mappedBy = "idCampoFutbol")
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL ,mappedBy = "idCampoFutbol")
     private List<Reserva> reserva;
+
     @Enumerated(EnumType.STRING)
     private SuperficieCampo superficieCampo;
 

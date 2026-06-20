@@ -1,0 +1,275 @@
+package com.Reservas.SistemaReservas.Services.impl;
+
+import com.Reservas.SistemaReservas.Entity.Balon;
+import com.Reservas.SistemaReservas.Entity.ReservaBalon;
+import com.Reservas.SistemaReservas.Repository.*;
+import com.Reservas.SistemaReservas.Repository.Especificaciones.ReservaEspecificaciones;
+import com.Reservas.SistemaReservas.dto.request.ReservaBalonRequest;
+import com.Reservas.SistemaReservas.dto.request.ReservaRequest;
+import com.Reservas.SistemaReservas.Entity.CampoFutbol;
+import com.Reservas.SistemaReservas.Entity.Enum.EstadoReserva;
+import com.Reservas.SistemaReservas.Entity.Reserva;
+import com.Reservas.SistemaReservas.Entity.security.Usuario;
+import com.Reservas.SistemaReservas.Services.reglas.ReservaServiceImpl;
+import com.Reservas.SistemaReservas.dto.request.ReservaRequestEspecification;
+import com.Reservas.SistemaReservas.dto.response.ReservaBalonResponse;
+import com.Reservas.SistemaReservas.dto.response.ReservaCamisetaResponse;
+import com.Reservas.SistemaReservas.dto.response.ReservaReponse;
+import com.Reservas.SistemaReservas.excepcion.ApiExcepcion;
+import com.Reservas.SistemaReservas.excepcion.MensajesExcepction;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.List;
+
+@Service
+@AllArgsConstructor
+public class ReservaService implements ReservaServiceImpl {
+
+    private UsuarioRepository usuarioRepository;
+    private ReservaRepository reservaRepository;
+    private CampoFutbolRepository campoFutbolRepository;
+    private BalonService balonService;
+    private ReservaBalonRepository reservaBalonRepository;
+
+
+    @Override
+    public boolean cancelarReserva(Long id) {
+
+        if (id <= 0) {
+            throw ApiExcepcion.valueInvalid(MensajesExcepction.DATO_INVALIDO.formatted(id));
+        }
+        Reserva reserva = reservaRepository.findById(id).orElseThrow(() -> ApiExcepcion.valueInvalid(MensajesExcepction.VALOR_NO_ENCONTRADO.formatted(id)));
+
+        reserva.setEstadoReserva(EstadoReserva.DISPONIBLE);
+
+        return true;
+    }
+
+    @Override
+    public List<ReservaReponse> findByCampoFutbol(Long id) {
+        if (id <= 0) {
+            throw ApiExcepcion.valueInvalid(MensajesExcepction.DATO_INVALIDO.formatted(id));
+
+        }
+
+        CampoFutbol campoFutbol = campoFutbolRepository.findById(id).orElseThrow(() -> new RuntimeException("Campo no encontrado con ese Id"));
+
+        return reservaRepository.findByIdCampoFutbol(campoFutbol).stream().map(entidad -> new ReservaReponse(
+                entidad.getUsuario()
+                        .getNombre(),
+                entidad.getHoraInicio()
+                        .toString(), entidad.getHoraFinal()
+                .toString(), entidad.getFecha(),
+                entidad.getDia(), null
+        )).toList();
+
+    }
+
+    @Override
+    public List<ReservaReponse> findByHoraInicio(@NotBlank LocalTime horaInicio) {
+
+        List<Reserva> reservasPorHora = reservaRepository.findByHoraInicio(horaInicio);
+
+        return reservasPorHora.stream().map(entidad -> new ReservaReponse(entidad.getUsuario().getNombre(),
+                entidad.getHoraInicio().toString(),
+                entidad.getHoraFinal().toString(),
+                entidad.getFecha(),
+                entidad.getDia(),
+                new ReservaBalonRequest(entidad.getBalones().getIdBalon().getRutaImagen())
+        )).toList();
+
+    }
+
+    @Override
+    public ReservaBalonResponse guardarReservaBalon(Long idReserva, Long idBalon) {
+        Reserva reserva = buscarPorId(idReserva);
+        Balon balon = balonService.findById(idBalon);
+
+        long cruce = reservaRepository.contarCrucesReservaBalon(
+                idBalon,
+                reserva.getHoraFinal(),
+                reserva.getHoraInicio(),
+                reserva.getDia(),
+                reserva.getFecha()
+        );
+        if (cruce > 0) {
+            throw ApiExcepcion.valueInvalid(MensajesExcepction.CRUCE_HORARIO.formatted("id reserva:" + idReserva));
+        }
+        {
+
+            ReservaBalon reservaBalon = reservaBalonRepository.save(
+                    ReservaBalon.builder()
+                            .idBalon(balon)
+                            .idreserva(reserva)
+                            .build());
+            reserva.setBalones(reservaBalon);
+            reservaRepository.save(reserva);
+            return new ReservaBalonResponse(reserva.getHoraInicio().toString(), reserva.getHoraFinal().toString(),
+                    "Reservado con éxito");
+        }
+
+
+    }
+
+    @Override
+    public void eliminarReservaBalon(Long idReserva) {
+        Long cruce = reservaRepository.buscarReservaBalonEnReserva(idReserva);
+        if (cruce > 0) {
+            Reserva reserva = buscarPorId(idReserva);
+            reserva.setBalones(null);
+            reservaRepository.save(reserva);
+        } else {
+            throw ApiExcepcion.valueInvalid(MensajesExcepction.VALOR_NO_ENCONTRADO.formatted("No se tiene reserva de balón"));
+        }
+    }
+
+    @Override
+    public ReservaCamisetaResponse reservarCamiseta(Long idReserva, Long camisetaReserva) {
+
+        Reserva reserva = buscarPorId(idReserva);
+
+        Long cruce = reservaRepository.findCruceReservaCamiseta(
+                camisetaReserva, reserva.getHoraFinal(),
+                reserva.getHoraInicio(),
+                reserva.getDia(),
+                reserva.getFecha());
+
+        if (cruce > 0) {
+            throw ApiExcepcion.valueInvalid(MensajesExcepction.CRUCE_HORARIO.formatted("id reserva:" + idReserva));
+        }
+        return null;
+    }
+
+    @Override
+    public List<ReservaReponse> listarPorParametros(ReservaRequestEspecification reservaRequestEspecification) {
+
+        ReservaEspecificaciones reservaEspecificaciones =
+                new ReservaEspecificaciones(reservaRequestEspecification);
+        return reservaRepository.findAll(reservaEspecificaciones).stream()
+                .map(reserva -> new ReservaReponse(
+                        reserva.getUsuario().getNombre(),
+                        reserva.getHoraInicio().toString(),
+                        reserva.getHoraFinal().toString(),
+                        reserva.getFecha(),
+                        reserva.getDia(),
+                        (reserva.getBalones() != null) ?
+                                new ReservaBalonRequest(
+                                        reserva.getBalones().getIdBalon().getRutaImagen()
+                                ) : null
+                )).toList();
+
+    }
+
+
+    @Override
+    public List<ReservaReponse> findAll() {
+
+
+        return reservaRepository.findAll().stream().map(entidad ->
+
+                new ReservaReponse(
+                        entidad.getUsuario().getNombre(),
+                        entidad.getHoraInicio().toString(),
+                        entidad.getHoraFinal().toString(),
+                        entidad.getFecha(),
+                        entidad.getDia(),
+                        (entidad.getBalones() != null) ?
+                                new ReservaBalonRequest(entidad.getBalones().getIdBalon().getRutaImagen()) :
+                                null)
+        ).toList();
+    }
+
+    @Override
+    public List<ReservaReponse> findByDia(String dia) {
+        //validar si está vacio
+        if (dia.isBlank()) {
+            throw new RuntimeException("elemento en blanco");
+        }
+        //impedir que coloque un dia que no es de la semana
+        List<String> diasValidos = List.of("LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO");
+
+        if (!diasValidos.contains(dia.toUpperCase())) {
+            throw new RuntimeException("dia no valido");
+        }
+
+        List<Reserva> reservas = reservaRepository.findByDia(dia);
+        //validar si la lista está vacia
+        if (reservas.isEmpty()) {
+            throw new RuntimeException("No se encontraron reservas para el dia" + dia.toUpperCase());
+        }
+
+        return reservaRepository.findByDia(dia).stream().map(
+                reserva -> new ReservaReponse(
+                        reserva.getUsuario().getNombre(),
+                        reserva.getHoraInicio().toString(),
+                        reserva.getHoraFinal().toString(),
+                        reserva.getFecha(),
+                        reserva.getDia(),
+                        new ReservaBalonRequest(
+                                reserva.getBalones()
+                                        .getIdBalon()
+                                        .getRutaImagen())
+                )).toList();
+    }
+
+
+    private boolean validarEstadoReserva(String estado) {
+
+        return Arrays.stream(EstadoReserva.values()).anyMatch(estadoReserva -> estadoReserva.name().equals(estado.toUpperCase()));
+    }
+
+    @Override
+    public List<ReservaReponse> findByEstadoReserva(String estado) {
+        if (estado.isBlank()) {
+            throw new RuntimeException("El estado es nulo");
+        }
+
+        if (!validarEstadoReserva(estado)) {
+            throw new RuntimeException("es estado no existe");
+        }
+
+
+        return reservaRepository.findByEstadoReserva(EstadoReserva.valueOf(estado)).stream().
+                map(entidad -> new ReservaReponse(
+                        entidad.getUsuario().getNombre(),
+                        entidad.getHoraInicio().toString(),
+                        entidad.getHoraFinal().toString(),
+                        entidad.getFecha(),
+                        entidad.getDia(),
+                        new ReservaBalonRequest(entidad.getBalones().getIdBalon().getRutaImagen())
+                )).toList();
+    }
+
+
+    @Override
+    public ReservaRequest guardar(ReservaRequest reserva) {
+        //validacion
+        Usuario usuario = usuarioRepository.findById(reserva.idUsuario()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        CampoFutbol campoFutbol = campoFutbolRepository.findById(reserva.campoFutbol()).orElseThrow(() -> new RuntimeException("No se encontró campod e futbol"));
+
+        Reserva reserva1 = Reserva.builder().idCampoFutbol(campoFutbol).fecha(reserva.fecha()).horaInicio(LocalTime.parse(reserva.horaInicio())).horaFinal(LocalTime.parse(reserva.horaFinal())).balones(null).camisetas(null).precio(reserva.precio()).usuario(usuario).dia(reserva.dia()).estadoReserva(EstadoReserva.RESERVADA).build();
+
+        List<Reserva> colapsadas = reservaRepository.findReservaColapsadas(campoFutbol.getId(), reserva.fecha(), reserva1.getDia(), LocalTime.parse(reserva.horaFinal()), LocalTime.parse(reserva.horaInicio()));
+        //validar que nos e cruce
+
+        if (!colapsadas.isEmpty()) {
+            throw new RuntimeException("Hay cruce");
+        }
+
+        reservaRepository.save(reserva1);
+        return reserva;
+
+    }
+
+    @Override
+    public Reserva buscarPorId(Long id) {
+        return reservaRepository.findById(id).orElseThrow(() -> ApiExcepcion.valueInvalid(MensajesExcepction.VALOR_NO_ENCONTRADO.formatted(id)));
+    }
+
+
+}
