@@ -6,6 +6,7 @@ import com.Reservas.SistemaReservas.dto.request.BalonDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class BalonController {
        return ResponseEntity.ok(balones);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/guardar")
     public ResponseEntity<BalonDto> guardarBalon(@Valid @RequestBody BalonDto balonDto){
         return ResponseEntity.ok(balonService.save(balonDto));

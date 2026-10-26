@@ -16,13 +16,14 @@ public class CamisetaController {
     @Autowired
     private CamisetaService camisetaService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
     public CamisetaDto save (@RequestBody CamisetaDto camisetaDto){
         return camisetaService.save(camisetaDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/fingById/{id}")
+    @GetMapping("/findById/{id}")
     public Camiseta findById(@PathVariable Long id){
          return camisetaService.findById(id);
     }

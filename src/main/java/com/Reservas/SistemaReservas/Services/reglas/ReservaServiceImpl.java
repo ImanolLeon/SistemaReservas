@@ -17,11 +17,13 @@ public interface ReservaServiceImpl  {
     List<ReservaReponse> findByEstadoReserva(String estado);
     ReservaRequest guardar(ReservaRequest reserva);
     Reserva buscarPorId(Long id);
+    ReservaReponse buscarPorIdResponse(Long id);
     boolean cancelarReserva(Long id);
     List<ReservaReponse> findByCampoFutbol(Long id);
     List<ReservaReponse> findByHoraInicio(LocalTime horaInicio);
     ReservaBalonResponse guardarReservaBalon(Long idReserva,Long idBalon);
     void eliminarReservaBalon(Long idReserva);
-    ReservaCamisetaResponse reservarCamiseta(Long idReserva, Long camisetaReserva);
+    ReservaCamisetaResponse reservarCamiseta(Long idReserva, Long idCamiseta);
+    void eliminarReservaCamiseta(Long idReserva);
     List<ReservaReponse> listarPorParametros(ReservaRequestEspecification reservaRequestEspecification) ;
 }

@@ -13,6 +13,8 @@ import com.Reservas.SistemaReservas.dto.response.UsuarioResponse;
 import com.Reservas.SistemaReservas.excepcion.ApiExcepcion;
 import com.Reservas.SistemaReservas.excepcion.MensajesExcepction;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class UsuarioService implements UsuarioServiceImpl {
 
     private UsuarioRepository usuarioRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<UsuarioResponse> findAll() {
@@ -43,7 +46,14 @@ public class UsuarioService implements UsuarioServiceImpl {
     @Override
     public UsuarioResponse save(UsuarioRequest usuarioRequest) {
 
-    Usuario usuario= usuarioRepository.save(UsuarioMapper.usuarioToUsuario(usuarioRequest));
+        if (usuarioRequest.password() == null || usuarioRequest.password().isBlank()) {
+            throw new ApiExcepcion("La password es obligatoria", HttpStatus.BAD_REQUEST);
+        }
+
+        Usuario usuario = UsuarioMapper.usuarioToUsuario(usuarioRequest);
+        // La password SIEMPRE se guarda encriptada con BCrypt
+        usuario.setPassword(passwordEncoder.encode(usuarioRequest.password()));
+        usuarioRepository.save(usuario);
         return UsuarioMapper.usuarioReponseToUsuario(usuario);
     }
 

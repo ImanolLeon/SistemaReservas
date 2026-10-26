@@ -18,6 +18,7 @@ public class ReservaBalon {
     private Long id;
 
 
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL,mappedBy = "balones")
     private Reserva idreserva;
 

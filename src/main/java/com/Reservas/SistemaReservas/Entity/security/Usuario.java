@@ -42,6 +42,7 @@ public class Usuario {
 
     private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Reserva> reserva ;
 
@@ -51,7 +52,7 @@ public class Usuario {
     private boolean isAccountNonLocked;
     private boolean isAccountNonExpired;
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
             @JoinTable(
                     name = "user_rol",
                     joinColumns = @JoinColumn(name = "user_id"),

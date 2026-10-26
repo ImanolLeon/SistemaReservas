@@ -1,6 +1,7 @@
 package com.Reservas.SistemaReservas.Entity;
 
 import com.Reservas.SistemaReservas.Entity.Enum.TamanoBalon;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class Balon {
     @Column(name = "Imagen")
     private String rutaImagen;
 
+    @JsonIgnore
     @OneToMany(targetEntity = ReservaBalon.class,cascade = CascadeType.ALL,mappedBy = "idBalon")
     private List<ReservaBalon> reservasBalones;
 

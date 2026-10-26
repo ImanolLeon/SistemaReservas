@@ -5,6 +5,7 @@ import com.Reservas.SistemaReservas.Entity.ReservaCamiseta;
 import com.Reservas.SistemaReservas.validations.interfaz.DiaValidationI;
 import com.Reservas.SistemaReservas.validations.interfaz.LocalTimeValidation;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
@@ -12,7 +13,7 @@ public record ReservaRequest (
 
         Long idUsuario,
 
-        @NotBlank
+        @NotNull
         Long campoFutbol,
 
         @LocalTimeValidation

@@ -1,5 +1,6 @@
 package com.Reservas.SistemaReservas.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.TypeAlias;
@@ -23,6 +24,7 @@ public class Camiseta {
     private String rutaImagen;
 
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "camisetaId")
     private List<ReservaCamiseta>  reservaCamiseta;
 }

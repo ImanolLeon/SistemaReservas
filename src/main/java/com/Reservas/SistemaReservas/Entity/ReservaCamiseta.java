@@ -1,5 +1,6 @@
 package com.Reservas.SistemaReservas.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +16,7 @@ public class ReservaCamiseta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "camisetas")
     private Reserva reservaCamiseta;
 

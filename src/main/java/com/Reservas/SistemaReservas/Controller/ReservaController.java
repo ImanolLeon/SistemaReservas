@@ -1,11 +1,10 @@
 package com.Reservas.SistemaReservas.Controller;
 
-import com.Reservas.SistemaReservas.Entity.Reserva;
 import com.Reservas.SistemaReservas.Services.impl.ReservaService;
-import com.Reservas.SistemaReservas.dto.request.ReservaBalonRequest;
 import com.Reservas.SistemaReservas.dto.request.ReservaRequest;
 import com.Reservas.SistemaReservas.dto.request.ReservaRequestEspecification;
 import com.Reservas.SistemaReservas.dto.response.ReservaBalonResponse;
+import com.Reservas.SistemaReservas.dto.response.ReservaCamisetaResponse;
 import com.Reservas.SistemaReservas.dto.response.ReservaReponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,6 +38,19 @@ public class ReservaController {
        reservaService.eliminarReservaBalon(idReserva);
        return ResponseEntity.status(HttpStatus.OK).build();
    }
+
+   @PostMapping("/reservarCamiseta/{idReserva}/{idCamiseta}")
+   public ResponseEntity<ReservaCamisetaResponse> reservarCamiseta(@PathVariable Long idReserva, @PathVariable Long idCamiseta){
+     return ResponseEntity.status(HttpStatus.CREATED)
+             .body(reservaService.reservarCamiseta(idReserva, idCamiseta));
+   }
+
+   @DeleteMapping("/borrarReservaCamiseta/{idReserva}")
+   public ResponseEntity<Void> borrarReservaCamiseta(@PathVariable Long idReserva){
+       reservaService.eliminarReservaCamiseta(idReserva);
+       return ResponseEntity.status(HttpStatus.OK).build();
+   }
+
    @GetMapping("/findAll")
    public ResponseEntity<List<ReservaReponse>> findAll(){
     return ResponseEntity.status(HttpStatus.OK)
@@ -64,9 +76,9 @@ public class ReservaController {
    }
 
    @GetMapping("/findById/{id}")
-   public ResponseEntity<Reserva> findById(@PathVariable Long id){
+   public ResponseEntity<ReservaReponse> findById(@PathVariable Long id){
     return ResponseEntity.status(HttpStatus.OK).body(
-            reservaService.buscarPorId(id));
+            reservaService.buscarPorIdResponse(id));
    }
 
    //Buscar por nombre
@@ -87,15 +99,4 @@ public class ReservaController {
                new ReservaRequestEspecification(fecha,dia,nombreCampoFutbol,horaInicio);
     return  ResponseEntity.status(HttpStatus.OK).body(reservaService.listarPorParametros(reservaRequestEspecification));
    }
-
-   //Buscar por nombre
-
-
-
-
-
-
-
-
-
 }

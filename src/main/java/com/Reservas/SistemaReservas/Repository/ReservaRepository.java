@@ -43,6 +43,11 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long>, JpaSpec
     long buscarReservaBalonEnReserva(@Param("id") Long idReserva);
 
     @Query(
+            "select count(r) from Reserva r where r.id= :id and r.camisetas is not null"
+    )
+    long buscarReservaCamisetaEnReserva(@Param("id") Long idReserva);
+
+    @Query(
             "SELECT COUNT(r) FROM Reserva r " +
                     "WHERE r.balones.idBalon.idBalon = :idBalon " +
                     "AND r.horaInicio < :horaFinal " +
